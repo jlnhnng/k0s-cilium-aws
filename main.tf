@@ -141,17 +141,21 @@ locals {
                   {
                     name = "aws-cloud-controller-manager"
                     url = "https://kubernetes.github.io/cloud-provider-aws"
+                  },
+                  {
+                    name = "aws-ebs-csi-driver"
+                    url = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
                   }
                 ]
                 charts = [
                   {
-                    name = "cilium"
+                    name = "a-cilium"
                     chartname = "cilium/cilium"
                     namespace = "kube-system"
                     version = "1.13.1"
                   },
                   {
-                    name = "aws-cloud-controller-manager"
+                    name = "b-aws-cloud-controller-manager"
                     chartname = "aws-cloud-controller-manager/aws-cloud-controller-manager"
                     namespace = "kube-system"
                     version = "0.0.7"
@@ -164,6 +168,16 @@ locals {
                         - --cluster-name=k0s-cilium-cluster
                       nodeSelector:
                         node-role.kubernetes.io/control-plane: "true"
+                    EOT
+                  },                   
+                  {
+                    name = "c-aws-ebs-csi-driver"
+                    chartname = "aws-ebs-csi-driver/aws-ebs-csi-driver"
+                    namespace = "kube-system"
+                    version = "2.17.2"
+                    values = <<-EOT
+                      node:
+                        kubeletPath: /var/lib/k0s/kubelet
                     EOT
                   }
                 ]

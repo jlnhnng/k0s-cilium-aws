@@ -122,7 +122,7 @@ locals {
                 mode = "iptables"
               }
               podCIDR = "10.244.0.0/16"
-              provider = "custom"
+              provider = "custom" # This allows to install a custom CNI
               serviceCIDR = "10.96.0.0/12"
             }
             storage = {
@@ -149,7 +149,7 @@ locals {
                 ]
                 charts = [
                   {
-                    name = "a-cilium"
+                    name = "a-cilium" # Here we are defining the installation via Helm of the custom CNI
                     chartname = "cilium/cilium"
                     namespace = "kube-system"
                     version = "1.13.1"

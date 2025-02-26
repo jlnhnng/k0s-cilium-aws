@@ -84,6 +84,14 @@ locals {
             "--kubelet-extra-args=\"--cloud-provider=external\""
           ]
           role = host.tags["Role"]
+          files = [
+            {
+              name = "aws-ebs-storageclass"
+              src = "./manifests/aws-ebs-storageclass.yaml"
+              dstDir =  "/var/lib/k0s/manifests/"
+              perm = 0600
+            }
+          ]
         }
       ]
       k0s = {
@@ -93,7 +101,7 @@ locals {
           apiVersion = "k0s.k0sproject.io/v1beta1"
           kind = "Cluster"
           metadata = {
-            name = "k0s-cilium-cluster"
+            name = "${var.cluster_name}"
           }
           spec = {
             api = {
@@ -122,7 +130,7 @@ locals {
                 mode = "iptables"
               }
               podCIDR = "10.244.0.0/16"
-              provider = "custom" # This allows to install a custom CNI
+              provider = "custom"
               serviceCIDR = "10.96.0.0/12"
             }
             storage = {
@@ -149,7 +157,7 @@ locals {
                 ]
                 charts = [
                   {
-                    name = "a-cilium" # Here we are defining the installation via Helm of the custom CNI
+                    name = "a-cilium"
                     chartname = "cilium/cilium"
                     namespace = "kube-system"
                     version = "1.13.1"
@@ -165,7 +173,7 @@ locals {
                         - --cloud-provider=aws
                         - --allocate-node-cidrs=false
                         - --cluster-cidr=172.20.0.0/16
-                        - --cluster-name=k0s-cilium-cluster
+                        - --cluster-name="${var.cluster_name}"
                       nodeSelector:
                         node-role.kubernetes.io/control-plane: "true"
                     EOT
